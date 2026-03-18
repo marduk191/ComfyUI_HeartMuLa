@@ -2,6 +2,8 @@
 
 ComfyUI custom nodes for AI music generation, lyrics transcription, source separation, and audio visualization — powered by the [HeartMuLa](https://huggingface.co/HeartMuLa) model family.
 
+There are visualizer demo videos at https://huggingface.co/marduk191/ComfyUI_HeartMuLa/tree/main/assets/visualizer_examples
+
 ---
 
 ## Nodes
