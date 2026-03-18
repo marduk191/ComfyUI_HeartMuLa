@@ -1,0 +1,522 @@
+{
+  "id": "e0e2082e-ca0f-4bfc-95f3-c0707aafd8d2",
+  "revision": 0,
+  "last_node_id": 34,
+  "last_link_id": 40,
+  "nodes": [
+    {
+      "id": 30,
+      "type": "HeartMuLa_AudioViz",
+      "pos": [
+        956.6628046198327,
+        304.83007180058326
+      ],
+      "size": [
+        400,
+        208
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 31
+        }
+      ],
+      "outputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLa_AudioViz",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24,
+        768,
+        432,
+        "waveform+spectrogram",
+        "dark",
+        ""
+      ]
+    },
+    {
+      "id": 29,
+      "type": "HeartMuLa_MilkDrop",
+      "pos": [
+        959.0886158679488,
+        570.3433607707603
+      ],
+      "size": [
+        398.8544269934192,
+        256
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 29
+        }
+      ],
+      "outputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "links": [
+            30,
+            38
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLa_MilkDrop",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24,
+        864,
+        536,
+        "kaleidoscope",
+        "ice",
+        1,
+        2,
+        "Boner Beats inc."
+      ]
+    },
+    {
+      "id": 28,
+      "type": "CreateSaveVideo",
+      "pos": [
+        964.1619699968375,
+        877.1487194153577
+      ],
+      "size": [
+        391.1576290795987,
+        270
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 30
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "filepath",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CreateSaveVideo",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24,
+        "video/output",
+        "mp4",
+        "h264",
+        18,
+        "veryfast",
+        8,
+        "",
+        ""
+      ]
+    },
+    {
+      "id": 33,
+      "type": "HeartMuLa_FramePicker",
+      "pos": [
+        1380.3562872005189,
+        314.5285971181037
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": [
+            39
+          ]
+        }
+      ],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "Node name for S&R": "HeartMuLa_FramePicker"
+      },
+      "widgets_values": [
+        40
+      ]
+    },
+    {
+      "id": 13,
+      "type": "PreviewAudio",
+      "pos": [
+        1383.8136498773886,
+        104.6564583559564
+      ],
+      "size": [
+        361.7807678589047,
+        156.30134553650714
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 17
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "PreviewAudio",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "audioUI": true
+          },
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 32,
+      "type": "PreviewImage",
+      "pos": [
+        1380.9411403853155,
+        404.31257282976384
+      ],
+      "size": [
+        366.1853964653251,
+        333.6468411303134
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 39
+        }
+      ],
+      "outputs": [],
+      "title": "Visualizer Preview",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.17.0",
+        "Node name for S&R": "PreviewImage",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 21,
+      "type": "HeartMuLa_Generate",
+      "pos": [
+        490.9037099460003,
+        123.32326148912696
+      ],
+      "size": [
+        398.48219232141105,
+        1023.1596130381229
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "audio_output",
+          "type": "AUDIO",
+          "links": [
+            17,
+            28,
+            29,
+            31
+          ]
+        },
+        {
+          "name": "filepath",
+          "type": "STRING",
+          "links": [
+            40
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLa_Generate",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        "[Intro]\n\n[Verse]\nThe sun creeps in across the floor\nI hear the traffic outside the door\nThe coffee pot begins to hiss\nIt is another morning just like this\n\n[Prechorus]\nThe world keeps spinning round and round\nFeet are planted on the ground\nI find my rhythm in the sound\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\nIt is the ordinary magic that we meet\n\n[Verse]\nThe hours tick deeply into noon\nChasing shadows,chasing the moon\nWork is done and the lights go low\nWatching the city start to glow\n\n[Bridge]\nIt is not always easy,not always bright\nSometimes we wrestle with the night\nBut we make it to the morning light\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\n\n[Outro]\nJust another day\nEvery single day",
+        "90s adult contemporary soft pop ballad, dreamy romantic atmosphere, warm rhodes piano, lush string pads, gentle acoustic guitar, expressive male vocalist, 72bpm, reverb-drenched production",
+        "oss-3B-happy-new-year",
+        "oss-20260123",
+        560528852312205,
+        "randomize",
+        145,
+        50,
+        1,
+        1.5,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "id": 20,
+      "type": "Note",
+      "pos": [
+        1381.3760126911543,
+        782.5508983334406
+      ],
+      "size": [
+        366.228138216904,
+        88
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "90s adult contemporary soft pop ballad, dreamy romantic atmosphere, warm rhodes piano, lush string pads, gentle acoustic guitar, expressive male vocalist, 72bpm, reverb-drenched production"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 19,
+      "type": "Note",
+      "pos": [
+        1382.9278672692512,
+        913.2906840098709
+      ],
+      "size": [
+        364.53955500089387,
+        231.36456775990723
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "[Intro]\n\n[Verse]\nThe sun creeps in across the floor\nI hear the traffic outside the door\nThe coffee pot begins to hiss\nIt is another morning just like this\n\n[Prechorus]\nThe world keeps spinning round and round\nFeet are planted on the ground\nI find my rhythm in the sound\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\nIt is the ordinary magic that we meet\n\n[Verse]\nThe hours tick deeply into noon\nChasing shadows,chasing the moon\nWork is done and the lights go low\nWatching the city start to glow\n\n[Bridge]\nIt is not always easy,not always bright\nSometimes we wrestle with the night\nBut we make it to the morning light\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\n\n[Outro]\nJust another day\nEvery single day"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 34,
+      "type": "PreviewAny",
+      "pos": [
+        958.8243949565818,
+        109.68981933963656
+      ],
+      "size": [
+        400.4158724048075,
+        150.82192321410952
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "source",
+          "type": "*",
+          "link": 40
+        }
+      ],
+      "outputs": [],
+      "title": "Save Path",
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {}
+        },
+        "cnr_id": "comfy-core",
+        "ver": "0.17.0",
+        "Node name for S&R": "PreviewAny"
+      },
+      "widgets_values": [
+        null,
+        null,
+        false
+      ]
+    }
+  ],
+  "links": [
+    [
+      17,
+      21,
+      0,
+      13,
+      0,
+      "AUDIO"
+    ],
+    [
+      28,
+      21,
+      0,
+      28,
+      1,
+      "AUDIO"
+    ],
+    [
+      29,
+      21,
+      0,
+      29,
+      0,
+      "AUDIO"
+    ],
+    [
+      30,
+      29,
+      0,
+      28,
+      0,
+      "IMAGE"
+    ],
+    [
+      31,
+      21,
+      0,
+      30,
+      0,
+      "AUDIO"
+    ],
+    [
+      38,
+      29,
+      0,
+      33,
+      0,
+      "IMAGE"
+    ],
+    [
+      39,
+      33,
+      0,
+      32,
+      0,
+      "IMAGE"
+    ],
+    [
+      40,
+      21,
+      1,
+      34,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7972024500000007,
+      "offset": [
+        -85.20791611177552,
+        86.67428096558928
+      ]
+    },
+    "frontendVersion": "1.41.20",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true,
+    "ue_links": [],
+    "links_added_by_ue": []
+  },
+  "version": 0.4
+}

@@ -1,0 +1,295 @@
+{
+  "id": "e0e2082e-ca0f-4bfc-95f3-c0707aafd8d2",
+  "revision": 0,
+  "last_node_id": 42,
+  "last_link_id": 45,
+  "nodes": [
+    {
+      "id": 27,
+      "type": "ShowText|pysssss",
+      "pos": [
+        1542.1012993312245,
+        340.41795719170904
+      ],
+      "size": [
+        430.08267489346554,
+        328.4793035333805
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 38
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "shape": 6,
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "ShowText|pysssss",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "The sun cracks on the cross before I hear the traffic lights close the door The cross that brought the ghost to her一颗粉末把爱种下 一颗粉末把爱种下 你是美丽 比我美 这所有次अगि तेवा कर्ष्णा या नुठ्य तेवा कर्ष्णा या नुठ्य उफें नुगIf I didn't need you then I would die If I didn't need you then I would dieI have a whole bunch, bunches I've got a whole bunch, bunch Like a billion times, billion timesLike a bullet through my head Even through the stars burning down I know that I am not your killerThere's no one on earth to call a man I used to take it into my ownI'll walk through dark and light for you. Seasons through the it's touching them. It is not all, it's all, it's all, that all's asking to try and see what they need, they need to try and move on and on.To the morning moon Mother, do you know the trash? Mother, do you feel the punch?Nithing shall touch what's good or bad. Nothing shall stop the storm. Nothing shall stop the storm.Nie wanTwerde Schar  schar war da Christendom war daHow the shell will break You"
+      ]
+    },
+    {
+      "id": 39,
+      "type": "LoadAudio",
+      "pos": [
+        850.9997159350224,
+        536.9424732303119
+      ],
+      "size": [
+        335.06136291433654,
+        136
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "AUDIO",
+          "type": "AUDIO",
+          "links": [
+            44
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.17.0",
+        "Node name for S&R": "LoadAudio",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        "kaleidoscope.mp4",
+        null,
+        null
+      ]
+    },
+    {
+      "id": 36,
+      "type": "HeartMuLa_Transcribe",
+      "pos": [
+        1198.6053926297664,
+        517.0838853971578
+      ],
+      "size": [
+        326.931640625,
+        154
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio_input",
+          "type": "AUDIO",
+          "link": 45
+        }
+      ],
+      "outputs": [
+        {
+          "name": "lyrics_text",
+          "type": "STRING",
+          "links": [
+            38
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLa_Transcribe",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        2,
+        "0.0,0.1,0.2,0.4",
+        0.4,
+        -1,
+        1.8
+      ]
+    },
+    {
+      "id": 41,
+      "type": "Note",
+      "pos": [
+        853.69337546251,
+        261.5569528534496
+      ],
+      "size": [
+        329.946801155854,
+        224.2252955984345
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "**htdemucs_ft** — best for vocals. Fine-tuned version of htdemucs with extra training specifically on each stem. Slower but noticeably cleaner separation, especially on vocals.\n\n**htdemucs** — the base Hybrid Transformer Demucs model. Fast, good quality, solid all-rounder. Use this if speed matters more than perfection.\n\n**mdx_extra** — MDX architecture (different from Hybrid Transformer). Trained on extra data. Competitive with htdemucs_ft on vocals, sometimes better on certain music styles. Worth trying if htdemucs_ft leaves artifacts.\n\n**mdx_extra_q** — quantized version of mdx_extra. Smaller, faster, slightly lower quality. Use only if VRAM is tight.\n\n**For vocal separation:** start with `htdemucs_ft`. If you hear bleed or artifacts, try `mdx_extra` as a second opinion — they make different kinds of mistakes so one may work better depending on the track.\n\nThe `shifts` widget also matters a lot for vocal quality — default is 1, but setting it to 4 or higher significantly reduces artifacts at the cost of being proportionally slower."
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 40,
+      "type": "HeartMuLa_Demucs",
+      "pos": [
+        1201.8902751976098,
+        265.29343187439156
+      ],
+      "size": [
+        319.6473014803822,
+        190
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 44
+        }
+      ],
+      "outputs": [
+        {
+          "name": "vocals",
+          "type": "AUDIO",
+          "links": [
+            45
+          ]
+        },
+        {
+          "name": "drums",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "bass",
+          "type": "AUDIO",
+          "links": null
+        },
+        {
+          "name": "other",
+          "type": "AUDIO",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HeartMuLa_Demucs",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        "htdemucs_ft",
+        5,
+        0.25,
+        true
+      ]
+    },
+    {
+      "id": 42,
+      "type": "Note",
+      "pos": [
+        1200.6823359490895,
+        713.0709829187006
+      ],
+      "size": [
+        322.490490329978,
+        88
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {},
+      "widgets_values": [
+        "This transcriber sucks bad, you should probnably just use whisper. At least you got a free Demucs node out of it lol"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      38,
+      36,
+      0,
+      27,
+      0,
+      "STRING"
+    ],
+    [
+      44,
+      39,
+      0,
+      40,
+      0,
+      "AUDIO"
+    ],
+    [
+      45,
+      40,
+      0,
+      36,
+      0,
+      "AUDIO"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 1.1671841070450009,
+      "offset": [
+        -437.0520679159024,
+        30.318029862807812
+      ]
+    },
+    "workflowRendererVersion": "LG",
+    "frontendVersion": "1.41.20",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true,
+    "ue_links": [],
+    "links_added_by_ue": []
+  },
+  "version": 0.4
+}

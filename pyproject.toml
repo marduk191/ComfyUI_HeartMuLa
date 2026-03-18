@@ -1,0 +1,31 @@
+[project]
+name = "heartmula_comfyui"
+description = "ComfyUI nodes for HeartMuLa AI music generation, transcription, source separation, and visualization"
+version = "1.7.0"
+license = {file = "LICENSE"}
+classifiers = [
+    "Operating System :: OS Independent",
+    "Environment :: GPU :: NVIDIA CUDA",
+    "Environment :: GPU :: AMD ROCm",
+    "Environment :: GPU :: Intel Arc",
+    "Environment :: GPU :: Apple Metal",
+]
+
+dependencies = [
+    "vector-quantize-pytorch",
+    "torchao",
+    "torchtune>=0.4.0",
+    "soundfile",
+    "bitsandbytes",
+    "imageio-ffmpeg",
+    "demucs>=4.0.0",
+]
+
+[project.urls]
+Repository = "https://github.com/marduk191/ComfyUI_HeartMuLa"
+
+[tool.comfy]
+PublisherId = "marduk191"
+DisplayName = "ComfyUI_HeartMuLa"
+Icon = ""
+includes = []
