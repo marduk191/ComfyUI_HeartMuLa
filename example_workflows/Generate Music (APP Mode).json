@@ -1,0 +1,1009 @@
+{
+  "id": "e0e2082e-ca0f-4bfc-95f3-c0707aafd8d2",
+  "revision": 0,
+  "last_node_id": 42,
+  "last_link_id": 65,
+  "nodes": [
+    {
+      "id": 19,
+      "type": "Note",
+      "pos": [
+        512.2581898240808,
+        1218.2320448900346
+      ],
+      "size": [
+        364.53955500089387,
+        231.36456775990723
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "[Intro]\n\n[Verse]\nThe sun creeps in across the floor\nI hear the traffic outside the door\nThe coffee pot begins to hiss\nIt is another morning just like this\n\n[Prechorus]\nThe world keeps spinning round and round\nFeet are planted on the ground\nI find my rhythm in the sound\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\nIt is the ordinary magic that we meet\n\n[Verse]\nThe hours tick deeply into noon\nChasing shadows,chasing the moon\nWork is done and the lights go low\nWatching the city start to glow\n\n[Bridge]\nIt is not always easy,not always bright\nSometimes we wrestle with the night\nBut we make it to the morning light\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\n\n[Outro]\nJust another day\nEvery single day"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 20,
+      "type": "Note",
+      "pos": [
+        30.527178746903928,
+        1068.1747069406515
+      ],
+      "size": [
+        366.228138216904,
+        88
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [],
+      "properties": {
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "90s adult contemporary soft pop ballad, dreamy romantic atmosphere, warm rhodes piano, lush string pads, gentle acoustic guitar, expressive male vocalist, 72bpm, reverb-drenched production"
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 13,
+      "type": "PreviewAudio",
+      "pos": [
+        1369.6365735274562,
+        67.43128424867668
+      ],
+      "size": [
+        361.7807678589047,
+        156.30134553650714
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 17
+        },
+        {
+          "label": "audioUI",
+          "name": "audioUI",
+          "type": "AUDIO_UI",
+          "widget": {
+            "name": "audioUI"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.9.2",
+        "Node name for S&R": "PreviewAudio",
+        "ue_properties": {
+          "widget_ue_connectable": {
+            "audioUI": true
+          },
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 33,
+      "type": "HeartMuLa_FramePicker",
+      "pos": [
+        1390.9006602139218,
+        429.7038578062756
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "link": 47
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": []
+        }
+      ],
+      "properties": {
+        "aux_id": "marduk191/ComfyUI_HeartMuLa",
+        "ver": "24699e5fbc99e5d5a689142a0437661e2f3bb555",
+        "Node name for S&R": "HeartMuLa_FramePicker",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        40
+      ]
+    },
+    {
+      "id": 21,
+      "type": "HeartMuLa_Generate",
+      "pos": [
+        490.9037099460003,
+        123.32326148912696
+      ],
+      "size": [
+        398.48219232141105,
+        1023.1596130381229
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "lyrics",
+          "name": "lyrics",
+          "type": "STRING",
+          "widget": {
+            "name": "lyrics"
+          },
+          "link": null
+        },
+        {
+          "label": "Genre and Tags",
+          "name": "tags",
+          "type": "STRING",
+          "widget": {
+            "name": "tags"
+          },
+          "link": null
+        },
+        {
+          "label": "Model Version",
+          "name": "version",
+          "type": "COMBO",
+          "widget": {
+            "name": "version"
+          },
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "audio_output",
+          "type": "AUDIO",
+          "links": [
+            17,
+            29,
+            31,
+            43,
+            54
+          ]
+        },
+        {
+          "name": "filepath",
+          "type": "STRING",
+          "links": []
+        }
+      ],
+      "properties": {
+        "aux_id": "marduk191/ComfyUI_HeartMuLa",
+        "ver": "24699e5fbc99e5d5a689142a0437661e2f3bb555",
+        "Node name for S&R": "HeartMuLa_Generate",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        "[Intro]\n\n[Verse]\nThe sun creeps in across the floor\nI hear the traffic outside the door\nThe coffee pot begins to hiss\nIt is another morning just like this\n\n[Prechorus]\nThe world keeps spinning round and round\nFeet are planted on the ground\nI find my rhythm in the sound\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\nIt is the ordinary magic that we meet\n\n[Verse]\nThe hours tick deeply into noon\nChasing shadows,chasing the moon\nWork is done and the lights go low\nWatching the city start to glow\n\n[Bridge]\nIt is not always easy,not always bright\nSometimes we wrestle with the night\nBut we make it to the morning light\n\n[Chorus]\nEvery day the light returns\nEvery day the fire burns\nWe keep on walking down this street\nMoving to the same steady beat\n\n[Outro]\nJust another day\nEvery single day",
+        "90s adult contemporary soft pop ballad, dreamy romantic atmosphere, warm rhodes piano, lush string pads, gentle acoustic guitar, expressive male vocalist, 72bpm, reverb-drenched production",
+        "oss-3B-happy-new-year",
+        "oss-20260123",
+        275019610785077,
+        "randomize",
+        145,
+        50,
+        1,
+        1.5,
+        true,
+        false,
+        false,
+        true,
+        true,
+        true
+      ],
+      "color": "#432",
+      "bgcolor": "#653"
+    },
+    {
+      "id": 30,
+      "type": "HeartMuLa_AudioViz",
+      "pos": [
+        955.4084181086017,
+        302.3212987781221
+      ],
+      "size": [
+        400,
+        208
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 31
+        },
+        {
+          "name": "lyrics",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "lyrics"
+          },
+          "link": 60
+        }
+      ],
+      "outputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "links": [
+            46,
+            61
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "marduk191/ComfyUI_HeartMuLa",
+        "ver": "24699e5fbc99e5d5a689142a0437661e2f3bb555",
+        "Node name for S&R": "HeartMuLa_AudioViz",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24,
+        768,
+        432,
+        "waveform+spectrogram",
+        "dark",
+        "Boner Beats inc."
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 29,
+      "type": "HeartMuLa_MilkDrop",
+      "pos": [
+        953.5693152185358,
+        563.4442349589929
+      ],
+      "size": [
+        398.8544269934192,
+        256
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 29
+        },
+        {
+          "name": "fps",
+          "type": "INT",
+          "widget": {
+            "name": "fps"
+          },
+          "link": 50
+        },
+        {
+          "name": "lyrics",
+          "shape": 7,
+          "type": "STRING",
+          "widget": {
+            "name": "lyrics"
+          },
+          "link": 59
+        }
+      ],
+      "outputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "links": [
+            45,
+            48
+          ]
+        }
+      ],
+      "properties": {
+        "aux_id": "marduk191/ComfyUI_HeartMuLa",
+        "ver": "24699e5fbc99e5d5a689142a0437661e2f3bb555",
+        "Node name for S&R": "HeartMuLa_MilkDrop",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24,
+        864,
+        536,
+        "combined",
+        "ice",
+        1,
+        2,
+        "Boner Beats inc."
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 41,
+      "type": "PrimitiveNode",
+      "pos": [
+        959.4453180212943,
+        1000.6248658012602
+      ],
+      "size": [
+        383.8579704565632,
+        88
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "widget": {
+            "name": "lyrics"
+          },
+          "links": [
+            59,
+            60
+          ]
+        }
+      ],
+      "title": "Title",
+      "properties": {
+        "Run widget replace on values": false,
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "version": "7.5.2",
+          "input_ue_unconnectable": {}
+        }
+      },
+      "widgets_values": [
+        "Boner Beats inc."
+      ]
+    },
+    {
+      "id": 40,
+      "type": "HeartMuLa_StaticFrames",
+      "pos": [
+        977.3955010162803,
+        884.8234061719396
+      ],
+      "size": [
+        372.107062014172,
+        58
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 54
+        }
+      ],
+      "outputs": [
+        {
+          "name": "frames",
+          "type": "IMAGE",
+          "links": [
+            55,
+            62
+          ]
+        }
+      ],
+      "title": "Static Background",
+      "properties": {
+        "aux_id": "marduk191/ComfyUI_HeartMuLa",
+        "ver": "901e62785c0ec3522d13923f1869c980dcc0d50f",
+        "Node name for S&R": "HeartMuLa_StaticFrames",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24
+      ]
+    },
+    {
+      "id": 38,
+      "type": "PrimitiveInt",
+      "pos": [
+        1380.2640329021178,
+        827.9268187069719
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "INT",
+          "type": "INT",
+          "links": [
+            50,
+            52
+          ]
+        }
+      ],
+      "title": "Visualizer Framerate",
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.17.0",
+        "Node name for S&R": "PrimitiveInt",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        24,
+        "fixed"
+      ]
+    },
+    {
+      "id": 39,
+      "type": "DF_Int_to_Float",
+      "pos": [
+        1680.4874491437579,
+        827.0974722532649
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {
+        "collapsed": true
+      },
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "Value",
+          "type": "INT",
+          "widget": {
+            "name": "Value"
+          },
+          "link": 52
+        }
+      ],
+      "outputs": [
+        {
+          "name": "FLOAT",
+          "type": "FLOAT",
+          "links": [
+            53
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "derfuu_comfyui_moddednodes",
+        "ver": "d0905bed31249f2bd0814c67585cf4fe3c77c015",
+        "Node name for S&R": "DF_Int_to_Float",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": [
+        1
+      ]
+    },
+    {
+      "id": 36,
+      "type": "Any Switch (rgthree)",
+      "pos": [
+        1386.2024240219218,
+        268.963636667305
+      ],
+      "size": [
+        263.72841796875,
+        106
+      ],
+      "flags": {
+        "collapsed": false
+      },
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "dir": 3,
+          "name": "any_01",
+          "type": "IMAGE",
+          "link": 45
+        },
+        {
+          "dir": 3,
+          "name": "any_02",
+          "type": "IMAGE",
+          "link": 46
+        },
+        {
+          "dir": 3,
+          "name": "any_03",
+          "type": "IMAGE",
+          "link": 55
+        },
+        {
+          "dir": 3,
+          "name": "any_04",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "dir": 3,
+          "name": "any_05",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "dir": 4,
+          "label": "IMAGE",
+          "name": "*",
+          "shape": 3,
+          "type": "IMAGE",
+          "links": [
+            47,
+            64
+          ]
+        }
+      ],
+      "title": "visualizer",
+      "properties": {
+        "cnr_id": "rgthree-comfy",
+        "ver": "8ff50e4521881eca1fe26aec9615fc9362474931",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 35,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        1875.5757200528103,
+        93.52663203020872
+      ],
+      "size": [
+        220.7333984375,
+        472.14434616583543
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 64
+        },
+        {
+          "name": "audio",
+          "shape": 7,
+          "type": "AUDIO",
+          "link": 43
+        },
+        {
+          "name": "meta_batch",
+          "shape": 7,
+          "type": "VHS_BatchManager",
+          "link": null
+        },
+        {
+          "name": "vae",
+          "shape": 7,
+          "type": "VAE",
+          "link": null
+        },
+        {
+          "name": "frame_rate",
+          "type": "FLOAT",
+          "widget": {
+            "name": "frame_rate"
+          },
+          "link": 53
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": [
+            63
+          ]
+        }
+      ],
+      "title": "Save Video",
+      "properties": {
+        "cnr_id": "comfyui-videohelpersuite",
+        "ver": "993082e4f2473bf4acaf06f51e33877a7eb38960",
+        "Node name for S&R": "VHS_VideoCombine",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "widgets_values": {
+        "frame_rate": 23,
+        "loop_count": 0,
+        "filename_prefix": "output",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 19,
+        "save_metadata": false,
+        "trim_to_audio": true,
+        "pingpong": false,
+        "save_output": true,
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {
+            "filename": "output_00115-audio.mp4",
+            "subfolder": "",
+            "type": "output",
+            "format": "video/h264-mp4",
+            "frame_rate": 24,
+            "workflow": "output_00115.png",
+            "fullpath": "D:\\ComfyTemp\\output_00115-audio.mp4"
+          }
+        }
+      }
+    },
+    {
+      "id": 37,
+      "type": "Fast Bypasser (rgthree)",
+      "pos": [
+        1416.338605673844,
+        551.939435349309
+      ],
+      "size": [
+        330.591796875,
+        210
+      ],
+      "flags": {},
+      "order": 13,
+      "mode": 0,
+      "inputs": [
+        {
+          "dir": 3,
+          "name": "HeartMuLa MilkDrop Visualizer",
+          "type": "*",
+          "link": 48
+        },
+        {
+          "dir": 3,
+          "name": "HeartMuLa Audio Visualizer",
+          "type": "*",
+          "link": 61
+        },
+        {
+          "dir": 3,
+          "name": "Static Background",
+          "type": "*",
+          "link": 62
+        },
+        {
+          "dir": 3,
+          "name": "Save Video",
+          "type": "*",
+          "link": 63
+        },
+        {
+          "dir": 3,
+          "name": "",
+          "type": "*",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "dir": 4,
+          "name": "OPT_CONNECTION",
+          "type": "*",
+          "links": []
+        }
+      ],
+      "properties": {
+        "toggleRestriction": "default",
+        "ue_properties": {
+          "widget_ue_connectable": {},
+          "input_ue_unconnectable": {},
+          "version": "7.5.2"
+        }
+      },
+      "color": "#432",
+      "bgcolor": "#653"
+    }
+  ],
+  "links": [
+    [
+      17,
+      21,
+      0,
+      13,
+      0,
+      "AUDIO"
+    ],
+    [
+      29,
+      21,
+      0,
+      29,
+      0,
+      "AUDIO"
+    ],
+    [
+      31,
+      21,
+      0,
+      30,
+      0,
+      "AUDIO"
+    ],
+    [
+      43,
+      21,
+      0,
+      35,
+      1,
+      "AUDIO"
+    ],
+    [
+      45,
+      29,
+      0,
+      36,
+      0,
+      "IMAGE"
+    ],
+    [
+      46,
+      30,
+      0,
+      36,
+      1,
+      "IMAGE"
+    ],
+    [
+      47,
+      36,
+      0,
+      33,
+      0,
+      "IMAGE"
+    ],
+    [
+      48,
+      29,
+      0,
+      37,
+      0,
+      "IMAGE"
+    ],
+    [
+      50,
+      38,
+      0,
+      29,
+      1,
+      "INT"
+    ],
+    [
+      52,
+      38,
+      0,
+      39,
+      0,
+      "INT"
+    ],
+    [
+      53,
+      39,
+      0,
+      35,
+      4,
+      "FLOAT"
+    ],
+    [
+      54,
+      21,
+      0,
+      40,
+      0,
+      "AUDIO"
+    ],
+    [
+      55,
+      40,
+      0,
+      36,
+      2,
+      "IMAGE"
+    ],
+    [
+      59,
+      41,
+      0,
+      29,
+      2,
+      "STRING"
+    ],
+    [
+      60,
+      41,
+      0,
+      30,
+      1,
+      "STRING"
+    ],
+    [
+      61,
+      30,
+      0,
+      37,
+      1,
+      "IMAGE"
+    ],
+    [
+      62,
+      40,
+      0,
+      37,
+      2,
+      "IMAGE"
+    ],
+    [
+      63,
+      35,
+      0,
+      37,
+      3,
+      "VHS_FILENAMES"
+    ],
+    [
+      64,
+      36,
+      0,
+      35,
+      0,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7247295000000006,
+      "offset": [
+        -232.82382572219868,
+        165.8739460326756
+      ]
+    },
+    "frontendVersion": "1.41.21",
+    "workflowRendererVersion": "LG",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true,
+    "ue_links": [],
+    "links_added_by_ue": [],
+    "linearData": {
+      "inputs": [
+        [
+          21,
+          "lyrics"
+        ],
+        [
+          21,
+          "tags"
+        ],
+        [
+          41,
+          "value"
+        ],
+        [
+          21,
+          "version"
+        ],
+        [
+          21,
+          "max_audio_length_seconds"
+        ],
+        [
+          37,
+          "Enable Save Video"
+        ],
+        [
+          37,
+          "Enable HeartMuLa MilkDrop Visualizer"
+        ],
+        [
+          37,
+          "Enable HeartMuLa Audio Visualizer"
+        ],
+        [
+          37,
+          "Enable Static Background"
+        ],
+        [
+          21,
+          "keep_model_loaded"
+        ]
+      ],
+      "outputs": [
+        13,
+        35
+      ]
+    },
+    "linearMode": true
+  },
+  "version": 0.4
+}
