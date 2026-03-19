@@ -633,22 +633,63 @@ class HeartMuLa_Demucs:
         return (stems["vocals"], stems["drums"], stems["bass"], stems["other"])
 
 
+_ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+
+
+class HeartMuLa_StaticFrames:
+    """Repeats a static image from the assets folder to match audio duration."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "audio": ("AUDIO",),
+                "fps":   ("INT", {"default": 24, "min": 1, "max": 60, "step": 1}),
+            }
+        }
+
+    RETURN_TYPES  = ("IMAGE",)
+    RETURN_NAMES  = ("frames",)
+    FUNCTION      = "generate"
+    CATEGORY      = "HeartMuLa"
+
+    def generate(self, audio, fps):
+        from PIL import Image as PILImage
+
+        img_path = os.path.join(_ASSETS_DIR, "noviz.jpg")
+        img      = PILImage.open(img_path).convert("RGB")
+        frame    = torch.from_numpy(
+            np.array(img, dtype=np.float32) / 255.0
+        ).unsqueeze(0)   # (1, H, W, 3)
+
+        waveform    = audio["waveform"]          # (B, C, S)
+        sr          = audio["sample_rate"]
+        n_samples   = waveform.shape[-1]
+        duration    = n_samples / max(sr, 1)
+        n_frames    = max(1, int(duration * fps))
+
+        frames = frame.expand(n_frames, -1, -1, -1).contiguous()
+        return (frames,)
+
+
 NODE_CLASS_MAPPINGS = {
-    "HeartMuLa_Generate":    HeartMuLa_Generate,
-    "HeartMuLa_Transcribe":  HeartMuLa_Transcribe,
-    "HeartMuLa_AudioViz":    HeartMuLa_AudioViz,
-    "HeartMuLa_MilkDrop":    HeartMuLa_MilkDrop,
-    "HeartMuLa_FramePicker": HeartMuLa_FramePicker,
-    "HeartMuLa_Demucs":      HeartMuLa_Demucs,
+    "HeartMuLa_Generate":      HeartMuLa_Generate,
+    "HeartMuLa_Transcribe":    HeartMuLa_Transcribe,
+    "HeartMuLa_AudioViz":      HeartMuLa_AudioViz,
+    "HeartMuLa_MilkDrop":      HeartMuLa_MilkDrop,
+    "HeartMuLa_FramePicker":   HeartMuLa_FramePicker,
+    "HeartMuLa_Demucs":        HeartMuLa_Demucs,
+    "HeartMuLa_StaticFrames":  HeartMuLa_StaticFrames,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "HeartMuLa_Generate":    "HeartMuLa Music Generator",
-    "HeartMuLa_Transcribe":  "HeartMuLa Lyrics Transcriber",
-    "HeartMuLa_AudioViz":    "HeartMuLa Audio Visualizer",
-    "HeartMuLa_MilkDrop":    "HeartMuLa MilkDrop Visualizer",
-    "HeartMuLa_FramePicker": "HeartMuLa Frame Picker",
-    "HeartMuLa_Demucs":      "HeartMuLa Demucs Separator",
+    "HeartMuLa_Generate":      "HeartMuLa Music Generator",
+    "HeartMuLa_Transcribe":    "HeartMuLa Lyrics Transcriber",
+    "HeartMuLa_AudioViz":      "HeartMuLa Audio Visualizer",
+    "HeartMuLa_MilkDrop":      "HeartMuLa MilkDrop Visualizer",
+    "HeartMuLa_FramePicker":   "HeartMuLa Frame Picker",
+    "HeartMuLa_Demucs":        "HeartMuLa Demucs Separator",
+    "HeartMuLa_StaticFrames":  "HeartMuLa Static Frames",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
