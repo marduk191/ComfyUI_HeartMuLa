@@ -224,8 +224,8 @@ class HeartMuLa_Generate:
             }
         }
 
-    RETURN_TYPES = ("AUDIO", "STRING")
-    RETURN_NAMES = ("audio_output", "filepath")
+    RETURN_TYPES  = ("AUDIO", "STRING", "HEARTMULA_TOKENS")
+    RETURN_NAMES  = ("audio_output", "filepath", "tokens")
     FUNCTION = "generate"
     CATEGORY = "HeartMuLa"
 
@@ -269,9 +269,10 @@ class HeartMuLa_Generate:
         filename = f"heartmula_gen_{uuid.uuid4().hex}.wav"
         out_path = os.path.join(output_dir, filename)
 
+        frames = None
         try:
             with torch.inference_mode():
-                pipe(
+                frames = pipe(
                     {"lyrics": lyrics, "tags": tags},
                     max_audio_length_ms=max_audio_length_ms,
                     save_path=out_path,
@@ -304,7 +305,8 @@ class HeartMuLa_Generate:
             waveform = waveform.unsqueeze(0)
 
         audio_output = {"waveform": waveform, "sample_rate": sample_rate}
-        return (audio_output, out_path)
+        tokens = {"frames": frames, "version": version, "codec_version": codec_version}
+        return (audio_output, out_path, tokens)
 
 
 class HeartMuLa_Transcribe:
@@ -633,6 +635,293 @@ class HeartMuLa_Demucs:
         return (stems["vocals"], stems["drums"], stems["bass"], stems["other"])
 
 
+def _make_gen_inputs(cls_self, extra_widgets=None):
+    """Shared INPUT_TYPES builder for Continue / Variation nodes."""
+    base = {
+        "required": {
+            "tokens":      ("HEARTMULA_TOKENS",),
+            "lyrics":      ("STRING", {"default": "", "multiline": True}),
+            "tags":        ("STRING", {"default": "pop, energetic", "multiline": False}),
+            "seed":        ("INT",    {"default": 0,   "min": 0, "max": 0xFFFFFFFFFFFFFFFF}),
+            "topk":        ("INT",    {"default": 50,  "min": 1, "max": 1000}),
+            "temperature": ("FLOAT",  {"default": 1.0, "min": 0.1, "max": 2.0, "step": 0.05}),
+            "cfg_scale":   ("FLOAT",  {"default": 1.5, "min": 1.0, "max": 10.0, "step": 0.1}),
+            "max_audio_length_seconds": (
+                "FLOAT", {"default": 30.0, "min": 1.0, "max": 300.0, "step": 1.0}
+            ),
+            "keep_model_loaded": ("BOOLEAN", {"default": True}),
+            "offload_mode":      (["auto", "aggressive"], {"default": "auto"}),
+            "quantize_4bit":     ("BOOLEAN", {"default": False}),
+            "use_compile":       ("BOOLEAN", {"default": False}),
+            "tf32_matmul":       ("BOOLEAN", {"default": True}),
+            "cudnn_benchmark":   ("BOOLEAN", {"default": True}),
+            "flash_attention":   ("BOOLEAN", {"default": True}),
+        }
+    }
+    if extra_widgets:
+        base["required"].update(extra_widgets)
+    return base
+
+
+class HeartMuLa_Continue:
+    """Continue generating music from an existing generation's token output."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return _make_gen_inputs(cls, extra_widgets={
+            "extra_length_seconds": (
+                "FLOAT", {"default": 30.0, "min": 1.0, "max": 300.0, "step": 1.0,
+                          "tooltip": "How many additional seconds to generate after the existing audio."}
+            ),
+        })
+
+    RETURN_TYPES  = ("AUDIO", "STRING", "HEARTMULA_TOKENS")
+    RETURN_NAMES  = ("audio_output", "filepath", "tokens")
+    FUNCTION      = "continue_gen"
+    CATEGORY      = "HeartMuLa"
+
+    def continue_gen(self, tokens, lyrics, tags, seed, topk, temperature,
+                     cfg_scale, max_audio_length_seconds, extra_length_seconds,
+                     keep_model_loaded, offload_mode, quantize_4bit,
+                     use_compile, tf32_matmul, cudnn_benchmark, flash_attention):
+
+        if torch.cuda.is_available():
+            torch.set_float32_matmul_precision("high" if tf32_matmul else "highest")
+            torch.backends.cudnn.benchmark = cudnn_benchmark
+            torch.backends.cuda.enable_flash_sdp(flash_attention)
+
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+        np.random.seed(seed & 0xFFFFFFFF)
+
+        prefix_frames = tokens["frames"]
+        version       = tokens["version"]
+        codec_version = tokens["codec_version"]
+
+        manager = HeartMuLaModelManager()
+        pipe = manager.get_gen_pipeline(
+            version=version,
+            codec_version=codec_version,
+            quantize_4bit=quantize_4bit,
+            use_compile=use_compile,
+            offload_mode=offload_mode,
+        )
+
+        output_dir = folder_paths.get_temp_directory()
+        os.makedirs(output_dir, exist_ok=True)
+        filename = f"heartmula_cont_{uuid.uuid4().hex}.wav"
+        out_path = os.path.join(output_dir, filename)
+
+        extra_ms = int(extra_length_seconds * 1000)
+        all_frames = None
+        try:
+            with torch.inference_mode():
+                all_frames = pipe.continue_from(
+                    inputs={"lyrics": lyrics, "tags": tags},
+                    prefix_frames=prefix_frames,
+                    extra_length_ms=extra_ms,
+                    topk=topk,
+                    temperature=temperature,
+                    cfg_scale=cfg_scale,
+                )
+                pipe.postprocess(all_frames, out_path, keep_model_loaded)
+        except Exception as e:
+            logger.error("HeartMuLa Continue: failed — %s", e)
+            raise
+        finally:
+            mm.soft_empty_cache()
+            gc.collect()
+
+        try:
+            waveform, sample_rate = torchaudio.load(out_path)
+            waveform = waveform.float()
+        except Exception:
+            waveform_np, sample_rate = sf.read(out_path)
+            waveform_np = waveform_np[np.newaxis, :] if waveform_np.ndim == 1 else waveform_np.T
+            waveform = torch.from_numpy(waveform_np).float()
+
+        if waveform.ndim == 2:
+            waveform = waveform.unsqueeze(0)
+
+        audio_output = {"waveform": waveform, "sample_rate": sample_rate}
+        new_tokens   = {"frames": all_frames, "version": version, "codec_version": codec_version}
+        return (audio_output, out_path, new_tokens)
+
+
+class HeartMuLa_Variation:
+    """Keep the first N seconds of an existing generation and regenerate the rest."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return _make_gen_inputs(cls, extra_widgets={
+            "prefix_seconds": (
+                "FLOAT", {"default": 10.0, "min": 0.5, "max": 300.0, "step": 0.5,
+                          "tooltip": "Seconds of the original audio to keep unchanged."}
+            ),
+        })
+
+    RETURN_TYPES  = ("AUDIO", "STRING", "HEARTMULA_TOKENS")
+    RETURN_NAMES  = ("audio_output", "filepath", "tokens")
+    FUNCTION      = "variation"
+    CATEGORY      = "HeartMuLa"
+
+    def variation(self, tokens, lyrics, tags, seed, topk, temperature,
+                  cfg_scale, max_audio_length_seconds, prefix_seconds,
+                  keep_model_loaded, offload_mode, quantize_4bit,
+                  use_compile, tf32_matmul, cudnn_benchmark, flash_attention):
+
+        if torch.cuda.is_available():
+            torch.set_float32_matmul_precision("high" if tf32_matmul else "highest")
+            torch.backends.cudnn.benchmark = cudnn_benchmark
+            torch.backends.cuda.enable_flash_sdp(flash_attention)
+
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+        np.random.seed(seed & 0xFFFFFFFF)
+
+        prefix_frames = tokens["frames"]
+        version       = tokens["version"]
+        codec_version = tokens["codec_version"]
+
+        manager = HeartMuLaModelManager()
+        pipe = manager.get_gen_pipeline(
+            version=version,
+            codec_version=codec_version,
+            quantize_4bit=quantize_4bit,
+            use_compile=use_compile,
+            offload_mode=offload_mode,
+        )
+
+        output_dir = folder_paths.get_temp_directory()
+        os.makedirs(output_dir, exist_ok=True)
+        filename = f"heartmula_var_{uuid.uuid4().hex}.wav"
+        out_path = os.path.join(output_dir, filename)
+
+        max_ms = int(max_audio_length_seconds * 1000)
+        all_frames = None
+        try:
+            with torch.inference_mode():
+                all_frames = pipe.variation_from(
+                    inputs={"lyrics": lyrics, "tags": tags},
+                    prefix_frames=prefix_frames,
+                    prefix_seconds=prefix_seconds,
+                    max_audio_length_ms=max_ms,
+                    topk=topk,
+                    temperature=temperature,
+                    cfg_scale=cfg_scale,
+                )
+                pipe.postprocess(all_frames, out_path, keep_model_loaded)
+        except Exception as e:
+            logger.error("HeartMuLa Variation: failed — %s", e)
+            raise
+        finally:
+            mm.soft_empty_cache()
+            gc.collect()
+
+        try:
+            waveform, sample_rate = torchaudio.load(out_path)
+            waveform = waveform.float()
+        except Exception:
+            waveform_np, sample_rate = sf.read(out_path)
+            waveform_np = waveform_np[np.newaxis, :] if waveform_np.ndim == 1 else waveform_np.T
+            waveform = torch.from_numpy(waveform_np).float()
+
+        if waveform.ndim == 2:
+            waveform = waveform.unsqueeze(0)
+
+        audio_output = {"waveform": waveform, "sample_rate": sample_rate}
+        new_tokens   = {"frames": all_frames, "version": version, "codec_version": codec_version}
+        return (audio_output, out_path, new_tokens)
+
+
+class HeartMuLa_TokensSave:
+    """Save HEARTMULA_TOKENS to a .pt file so you can continue or vary the song later."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "tokens":   ("HEARTMULA_TOKENS",),
+                "filename": ("STRING", {
+                    "default": "my_song",
+                    "tooltip": "Filename without extension. Saved as <filename>.heartmula.pt in ComfyUI output/HeartMuLa/",
+                }),
+            }
+        }
+
+    RETURN_TYPES  = ("HEARTMULA_TOKENS",)
+    RETURN_NAMES  = ("tokens",)
+    OUTPUT_NODE   = True
+    FUNCTION      = "save"
+    CATEGORY      = "HeartMuLa"
+
+    def save(self, tokens, filename):
+        out_dir = os.path.join(folder_paths.get_output_directory(), "HeartMuLa")
+        os.makedirs(out_dir, exist_ok=True)
+        # Sanitise filename — strip any extension the user typed and add ours.
+        base = os.path.splitext(filename)[0] if filename.strip() else "tokens"
+        save_path = os.path.join(out_dir, f"{base}.heartmula.pt")
+        torch.save(tokens, save_path)
+        logger.info("[HeartMuLa] Tokens saved → %s", save_path)
+        return (tokens,)
+
+
+class HeartMuLa_TokensLoad:
+    """Load HEARTMULA_TOKENS from a .pt file saved by HeartMuLa_TokensSave."""
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "filepath": ("STRING", {
+                    "default": "",
+                    "tooltip": (
+                        "Full path to a .heartmula.pt file "
+                        "(e.g. C:\\ComfyUI\\output\\HeartMuLa\\my_song.heartmula.pt). "
+                        "Files are saved to ComfyUI output/HeartMuLa/ by the "
+                        "HeartMuLa_TokensSave node."
+                    ),
+                }),
+            }
+        }
+
+    RETURN_TYPES  = ("HEARTMULA_TOKENS",)
+    RETURN_NAMES  = ("tokens",)
+    FUNCTION      = "load"
+    CATEGORY      = "HeartMuLa"
+
+    def load(self, filepath):
+        filepath = filepath.strip()
+        if not filepath:
+            raise ValueError("HeartMuLa_TokensLoad: 'filepath' is empty. "
+                             "Enter the full path to a .heartmula.pt file.")
+        if not os.path.isfile(filepath):
+            raise FileNotFoundError(
+                f"HeartMuLa_TokensLoad: file not found — {filepath!r}. "
+                f"Use the HeartMuLa_TokensSave node to save tokens first."
+            )
+        tokens = torch.load(filepath, map_location="cpu", weights_only=False)
+        # Validate structure
+        if not isinstance(tokens, dict) or "frames" not in tokens:
+            raise ValueError(
+                f"HeartMuLa_TokensLoad: {filepath!r} is not a valid HEARTMULA_TOKENS file. "
+                f"Expected a dict with 'frames', 'version', 'codec_version' keys."
+            )
+        frames = tokens["frames"]
+        if not isinstance(frames, torch.Tensor) or frames.dim() != 2 or frames.shape[0] != 8:
+            raise ValueError(
+                f"HeartMuLa_TokensLoad: 'frames' tensor has unexpected shape {tuple(frames.shape)}. "
+                f"Expected (8, T)."
+            )
+        logger.info(
+            "[HeartMuLa] Tokens loaded from %s — %d frames (%.1f s)",
+            filepath, frames.shape[1], frames.shape[1] / 12.5,
+        )
+        return (tokens,)
+
+
 _ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
 
 
@@ -674,6 +963,10 @@ class HeartMuLa_StaticFrames:
 
 NODE_CLASS_MAPPINGS = {
     "HeartMuLa_Generate":      HeartMuLa_Generate,
+    "HeartMuLa_Continue":      HeartMuLa_Continue,
+    "HeartMuLa_Variation":     HeartMuLa_Variation,
+    "HeartMuLa_TokensSave":    HeartMuLa_TokensSave,
+    "HeartMuLa_TokensLoad":    HeartMuLa_TokensLoad,
     "HeartMuLa_Transcribe":    HeartMuLa_Transcribe,
     "HeartMuLa_AudioViz":      HeartMuLa_AudioViz,
     "HeartMuLa_MilkDrop":      HeartMuLa_MilkDrop,
@@ -684,6 +977,10 @@ NODE_CLASS_MAPPINGS = {
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "HeartMuLa_Generate":      "HeartMuLa Music Generator",
+    "HeartMuLa_Continue":      "HeartMuLa Continue",
+    "HeartMuLa_Variation":     "HeartMuLa Variation",
+    "HeartMuLa_TokensSave":    "HeartMuLa Save Tokens",
+    "HeartMuLa_TokensLoad":    "HeartMuLa Load Tokens",
     "HeartMuLa_Transcribe":    "HeartMuLa Lyrics Transcriber",
     "HeartMuLa_AudioViz":      "HeartMuLa Audio Visualizer",
     "HeartMuLa_MilkDrop":      "HeartMuLa MilkDrop Visualizer",

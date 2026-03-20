@@ -393,7 +393,120 @@ class HeartMuLaGenPipeline:
                     self.model = None
                 self._empty_cache()
 
-    def __call__(self, inputs: Dict[str, Any], **kwargs) -> None:
+    def preprocess_with_prefix(
+        self,
+        inputs: Dict[str, Any],
+        cfg_scale: float,
+        prefix_frames: torch.Tensor,
+    ) -> Dict[str, Any]:
+        """Like preprocess() but appends existing codec frames to the token sequence.
+
+        The existing frames are injected after the text prompt so the backbone's
+        KV-cache is pre-filled with the audio context in a single forward pass,
+        after which generation continues naturally from the correct position.
+
+        Args:
+            inputs:        Same dict as preprocess() (lyrics, tags).
+            cfg_scale:     Classifier-free guidance scale.
+            prefix_frames: ``(8, T_pre)`` long tensor of codec indices on CPU.
+
+        Returns:
+            model_inputs dict with extended tokens / tokens_mask / pos.
+        """
+        model_inputs = self.preprocess(inputs, cfg_scale)
+
+        T_pre = prefix_frames.shape[1]
+        B = model_inputs["tokens"].shape[0]   # 1 or 2 (CFG)
+        prompt_len = model_inputs["tokens"].shape[1]
+
+        # Build audio-frame tokens: (T_pre, parallel_number)
+        # Columns 0‥7 = audio codebooks, column 8 = text (kept zero / inactive)
+        audio_pre = torch.zeros(
+            [T_pre, self._parallel_number], dtype=torch.long, device=self.device
+        )
+        audio_pre[:, :-1] = prefix_frames.T.to(self.device)   # (T_pre, 8)
+
+        audio_mask = torch.zeros_like(audio_pre, dtype=torch.bool)
+        audio_mask[:, :-1] = True   # audio columns active; text column inactive
+
+        # Expand to batch dimension
+        audio_pre_b  = audio_pre.unsqueeze(0).expand(B, -1, -1)
+        audio_mask_b = audio_mask.unsqueeze(0).expand(B, -1, -1)
+
+        # Extended position indices
+        pos_ext = (
+            torch.arange(prompt_len + T_pre, dtype=torch.long, device=self.device)
+            .unsqueeze(0)
+            .expand(B, -1)
+        )
+
+        model_inputs["tokens"]      = torch.cat([model_inputs["tokens"],      audio_pre_b],  dim=1)
+        model_inputs["tokens_mask"] = torch.cat([model_inputs["tokens_mask"], audio_mask_b], dim=1)
+        model_inputs["pos"]         = pos_ext
+
+        return model_inputs
+
+    # ------------------------------------------------------------------
+    # Public continuation / variation helpers
+    # ------------------------------------------------------------------
+
+    def continue_from(
+        self,
+        inputs: Dict[str, Any],
+        prefix_frames: torch.Tensor,
+        extra_length_ms: int,
+        **kwargs,
+    ) -> torch.Tensor:
+        """Extend *prefix_frames* with additional generated content.
+
+        Returns the combined ``(8, T_prefix + T_new)`` frames tensor (CPU),
+        which should be passed to :meth:`postprocess`.
+        """
+        cfg_scale = kwargs.get("cfg_scale", 1.5)
+        model_inputs = self.preprocess_with_prefix(inputs, cfg_scale, prefix_frames)
+        new_frames = self._forward(
+            model_inputs,
+            max_audio_length_ms=extra_length_ms,
+            temperature=kwargs.get("temperature", 1.0),
+            topk=kwargs.get("topk", 50),
+            cfg_scale=cfg_scale,
+        )
+        return torch.cat([prefix_frames, new_frames], dim=-1)
+
+    def variation_from(
+        self,
+        inputs: Dict[str, Any],
+        prefix_frames: torch.Tensor,
+        prefix_seconds: float,
+        max_audio_length_ms: int,
+        **kwargs,
+    ) -> torch.Tensor:
+        """Keep the first *prefix_seconds* of *prefix_frames*, regenerate the rest.
+
+        Returns the combined ``(8, T_keep + T_new)`` frames tensor (CPU).
+        """
+        cfg_scale = kwargs.get("cfg_scale", 1.5)
+        keep = max(1, int(prefix_seconds * 12.5))          # frames at 12.5 Hz
+        kept_frames = prefix_frames[:, :keep]
+        remaining_ms = max(1000, max_audio_length_ms - int(prefix_seconds * 1000))
+
+        model_inputs = self.preprocess_with_prefix(inputs, cfg_scale, kept_frames)
+        new_frames = self._forward(
+            model_inputs,
+            max_audio_length_ms=remaining_ms,
+            temperature=kwargs.get("temperature", 1.0),
+            topk=kwargs.get("topk", 50),
+            cfg_scale=cfg_scale,
+        )
+        return torch.cat([kept_frames, new_frames], dim=-1)
+
+    def __call__(self, inputs: Dict[str, Any], **kwargs) -> torch.Tensor:
+        """Run the full generation pipeline and return the raw frames tensor.
+
+        Returns:
+            ``(8, T)`` long tensor of codec indices on CPU so the caller can
+            store it as ``HEARTMULA_TOKENS`` for downstream Continue / Variation.
+        """
         keep_model_loaded = kwargs.get("keep_model_loaded", True)
         cfg_scale = kwargs.get("cfg_scale", 1.5)
 
@@ -410,6 +523,7 @@ class HeartMuLaGenPipeline:
             kwargs.get("save_path", "out.wav"),
             keep_model_loaded,
         )
+        return frames
 
     @classmethod
     def from_pretrained(
