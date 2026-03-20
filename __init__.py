@@ -961,6 +961,28 @@ class HeartMuLa_StaticFrames:
         return (frames,)
 
 
+# ---------------------------------------------------------------------------
+# Utility nodes
+# ---------------------------------------------------------------------------
+
+class HeartMuLa_IntToFloat:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "value": ("INT", {"default": 0, "min": -(2**31), "max": 2**31 - 1}),
+            }
+        }
+
+    RETURN_TYPES = ("FLOAT",)
+    RETURN_NAMES = ("float",)
+    FUNCTION = "convert"
+    CATEGORY = "HeartMuLa"
+
+    def convert(self, value):
+        return (float(value),)
+
+
 NODE_CLASS_MAPPINGS = {
     "HeartMuLa_Generate":      HeartMuLa_Generate,
     "HeartMuLa_Continue":      HeartMuLa_Continue,
@@ -973,6 +995,7 @@ NODE_CLASS_MAPPINGS = {
     "HeartMuLa_FramePicker":   HeartMuLa_FramePicker,
     "HeartMuLa_Demucs":        HeartMuLa_Demucs,
     "HeartMuLa_StaticFrames":  HeartMuLa_StaticFrames,
+    "HeartMuLa_IntToFloat":    HeartMuLa_IntToFloat,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -987,6 +1010,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "HeartMuLa_FramePicker":   "HeartMuLa Frame Picker",
     "HeartMuLa_Demucs":        "HeartMuLa Demucs Separator",
     "HeartMuLa_StaticFrames":  "HeartMuLa Static Frames",
+    "HeartMuLa_IntToFloat":    "HeartMuLa Int to Float",
 }
 
 __all__ = ["NODE_CLASS_MAPPINGS", "NODE_DISPLAY_NAME_MAPPINGS"]
